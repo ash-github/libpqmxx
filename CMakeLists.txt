@@ -12,7 +12,7 @@ SET(SOURCE_FILES
 		src/postgres-result.cpp
         )
 
-add_library(${PROJECT_NAME} static ${SOURCE_FILES})
+add_library(${PROJECT_NAME} ${SOURCE_FILES})
 INCLUDE_DIRECTORIES("${PG_BASE}/include/postgresql"
 					"include"
                    )
