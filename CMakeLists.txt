@@ -13,7 +13,7 @@ SET(SOURCE_FILES
         )
 
 add_library(${PROJECT_NAME} ${SOURCE_FILES})
-install(TARGETS test DESTINATION lib)
+install(TARGETS ${PROJECT_NAME} DESTINATION lib)
 INCLUDE_DIRECTORIES("${PG_BASE}/include/postgresql"
 					"include"
                    )
