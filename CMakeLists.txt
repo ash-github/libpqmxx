@@ -12,10 +12,10 @@ SET(SOURCE_FILES
 		src/postgres-result.cpp
         )
 
-add_library(${PROJECT_NAME} ${SOURCE_FILES})
+add_library(libpqmxx ${SOURCE_FILES})
 SET(LIBRARY_OUTPUT_PATH ../lib)
 INCLUDE_DIRECTORIES("${PG_BASE}/include/postgresql"
 					"include"
                    )
 LINK_DIRECTORIES("${PG_BASE}/lib/postgresql")
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} "${PG_BASE}/lib/libpq.so")
+TARGET_LINK_LIBRARIES(libpqmxx "${PG_BASE}/lib/libpq.so")
