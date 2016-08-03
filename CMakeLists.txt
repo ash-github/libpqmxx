@@ -13,7 +13,7 @@ SET(SOURCE_FILES
         )
 
 add_library(${PROJECT_NAME} ${SOURCE_FILES})
-SET(LIBRARY_OUTPUT_PATH lib)
+SET(LIBRARY_OUTPUT_PATH ../lib)
 INCLUDE_DIRECTORIES("${PG_BASE}/include/postgresql"
 					"include"
                    )
