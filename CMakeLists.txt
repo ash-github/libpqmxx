@@ -1,50 +1,20 @@
-cmake_minimum_required (VERSION 3.5)
-project (postgres-test)
+cmake_minimum_required(VERSION 2.8)
+project(libpqmxx)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -std=c++14")
+#aux_source_directory(. SRC_LIST)
+#add_executable(${PROJECT_NAME} ${SRC_LIST})
 
-# C++ standard 11
-set (CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED on)
+SET(PG_BASE "/usr")
+SET(SOURCE_FILES
+        src/postgres-connection.cpp
+		src/postgres-params.cpp
+		src/postgres-result.cpp
+        )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  set(CMAKE_XCODE_ATTRIBUTE_ENABLE_TESTABILITY "YES")
-endif()
-
-if(MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /source-charset:utf-8 /execution-charset:utf-8")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:msvcrt.lib")
-elseif (CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-endif()
-
-# Configure Googletest
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
-
-# Configure libpq
-find_package(PostgreSQL REQUIRED)
-include_directories(${PostgreSQL_INCLUDE_DIRS})
-link_directories(${PostgreSQL_LIBRARY_DIRS})
-
-include("libpqmxx.cmake")
-include_directories(${LIBPQMXX_INCLUDE_DIRS})
-
-#
-# postgres-test (Unit Testing)
-#
-macro(postgres_test target)
-  file(GLOB TEST_FILES ${CMAKE_CURRENT_LIST_DIR}/test/*.cpp)
-  add_executable(${target} ${TEST_FILES} ${INCLUDE_FILES} ${SOURCE_FILES})
-  target_link_libraries(${target} ${GTEST_LIBRARIES} ${LIBPQMXX_LIBRARIES} ${PostgreSQL_LIBRARIES})
-endmacro(postgres_test)
-
-#
-# postgres-example
-#
-macro(postgres_example target)
-  file(GLOB EXAMPLES_FILES ${CMAKE_CURRENT_LIST_DIR}/example/*.cpp)
-  add_executable(${target} ${EXAMPLES_FILES} ${INCLUDE_FILES} ${SOURCE_FILES})
-  target_link_libraries(${target} ${LIBPQMXX_LIBRARIES} ${PostgreSQL_LIBRARIES})
-endmacro(postgres_example)
-
-postgres_test(postgres-test)
-postgres_example(postgres-example)
+add_library(${PROJECT_NAME} static ${SOURCE_FILES})
+INCLUDE_DIRECTORIES("${PG_BASE}/include/postgresql"
+					"include"
+                   )
+LINK_DIRECTORIES("${PG_BASE}/lib/postgresql")
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} "${PG_BASE}/lib/libpq.so")
