@@ -96,6 +96,15 @@ namespace db {
       template<typename T>
       T get(int column) const;
 
+	  template<typename T>
+	  T get(const char* name) const
+	  {
+		  int column = PQfnumber(result_, name);
+		  if (column < 0)
+			  return{};
+
+		  return get<T>(column);
+	  }
       /**
        * Get a column name.
        *
