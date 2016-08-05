@@ -234,6 +234,45 @@ namespace db {
       return std::vector<uint8_t>(data, data + length);
     }
 
+	template<>
+	std::vector<float> Row::get<std::vector<float>>(int column) const {
+		assert(result_.pgresult_ != nullptr);
+//		assert_oid(PQftype(result_, column), BYTEAOID);
+		int nCount, i;
+		std::vector<float> padfList;
+
+		char * pData = PQgetvalue(result_, 0, column);
+
+		// goto number of array elements
+		pData += 3 * sizeof(int);
+		memcpy(&nCount, pData, sizeof(int));
+		nCount = be32toh(nCount);
+
+		pData += 2 * sizeof(int);
+
+		for (i = 0; i < nCount; i++)
+		{
+			// get element size
+			int nSize = *(int *)(pData);
+			nSize = be32toh(nSize);
+
+			pData += sizeof(int);
+
+			float fVal;
+
+			int32_t v;
+			memcpy(&v, pData, nSize);
+			v = be32toh(v);
+
+			fVal = *reinterpret_cast<float*>(&v);
+			padfList.push_back(fVal);
+
+			pData += nSize;
+		}
+
+		return padfList;
+	}
+
     // -------------------------------------------------------------------------
     // date
     // -------------------------------------------------------------------------
